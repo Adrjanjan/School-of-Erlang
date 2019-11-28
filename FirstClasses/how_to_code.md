@@ -108,7 +108,7 @@ foo([1,3,2,4]).
 The expression `Expr` is evaluated and the patterns `Pattern` are sequentially matched against the _result_. If a match succeeds and the optional guard sequence `GuardSeq` is true, the corresponding `Body` is evaluated.
 The return value of `Body` is the return value of the case expression.
 If there is no matching pattern with a true guard sequence, a case_clause run-time error occurs.
-
+```erlang
 is_even(MaybeNumber) ->
     case MaybeNumber of
          N when is_integer(N) andalso 5 rem 2 == 0 ->
@@ -118,7 +118,7 @@ is_even(MaybeNumber) ->
         Else ->
             {is_not_a_number, Else}
     end.
-
+```
 #### Lists
 
 The list concatenation operator `++` appends its second argument to its first and returns the resulting list.
