@@ -96,11 +96,11 @@ ExprModule:ExprFunction(Expr1,...,ExprN)
 
 foo(List) ->
     SortedList = lists:sort(List), % A list List is sorted and assigned to SortedList variable
-    SortedWithoutFirst = lists:droplast(SortedList), % Last element is deleted but as data is immutable old list is not changed.
-    {SortedList, SortedWithoutFirst}. % 
+    SortedWithoutLast = lists:droplast(SortedList), % Last element is deleted but as data is immutable old list is not changed.
+    {SortedList, SortedWithoutLast}.
 
 foo([1,3,2,4]).
-{[1, 2, 3, 4], [2, 3, 4]}
+{[1, 2, 3, 4], [1, 2, 3]}
 ```
 
 ##### case
@@ -108,7 +108,6 @@ foo([1,3,2,4]).
 The expression `Expr` is evaluated and the patterns `Pattern` are sequentially matched against the _result_. If a match succeeds and the optional guard sequence `GuardSeq` is true, the corresponding `Body` is evaluated.
 The return value of `Body` is the return value of the case expression.
 If there is no matching pattern with a true guard sequence, a case_clause run-time error occurs.
-```erlang
 is_even(MaybeNumber) ->
     case MaybeNumber of
          N when is_integer(N) andalso 5 rem 2 == 0 ->
