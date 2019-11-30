@@ -37,8 +37,8 @@ prop_ordered() ->
         list(integer()),
         ordered(quicksort:sort(L))).
 
-
 %% refactor me to use tail recursion
-ordered([]) -> true;
-ordered([_]) -> true;
-ordered([A, B | T]) -> A =< B andalso ordered([B | T]).
+ordered(L) -> ordered(L, true).
+ordered([], IsSorted) -> IsSorted;
+ordered([_], IsSorted) -> IsSorted;
+ordered([A, B | T], IsSorted) -> ordered([B | T], IsSorted andalso A =< B).

@@ -5,7 +5,8 @@
 -compile(export_all).
 
 % TODO replace module name with your module implementation
--define(IMPLEMENTATION, list_based_auth_service).
+% -define(IMPLEMENTATION, list_based_auth_service).
+-define(IMPLEMENTATION, map_based_auth_service).
 
 -import(?IMPLEMENTATION, [
         add_user/3,
@@ -128,15 +129,38 @@ deleting_one_user_does_not_affect_other_users_test() ->
 % if names are not explanatory enough, please ask :)
 
 user_with_correct_password_is_authenticated_test() ->
+    InitState = init_state(),
+    AddedUsersLogin = randomize_name("Adam"),
+    AddedUsersPassword = randomize_name("admin"),
+    OneUserState = add_user(AddedUsersLogin, AddedUsersPassword, InitState),
+    ?assert(auth_user(AddedUsersLogin, AddedUsersPassword, OneUserState)),
     ok.
 
 user_with_incorrect_password_is_not_authenticated_test() ->
+    InitState = init_state(),
+    AddedUsersLogin = randomize_name("Adam"),
+    AddedUsersPassword = randomize_name("admin"),
+    WrongUsersPassword = randomize_name("12345"),
+    OneUserState = add_user(AddedUsersLogin, AddedUsersPassword, InitState),
+    ?assert(not auth_user(AddedUsersLogin, WrongUsersPassword, OneUserState)),
     ok.
 
 not_existing_user_is_not_authenticated_test() ->
+    InitState = init_state(),
+    AddedUsersLogin = randomize_name("Adam"),
+    NonExistingUsersLogin = randomize_name("Adam"),
+    AddedUsersPassword = randomize_name("admin"),
+    OneUserState = add_user(AddedUsersLogin, AddedUsersPassword, InitState),
+    ?assert(not auth_user(NonExistingUsersLogin, AddedUsersPassword, OneUserState)),
     ok.
 
 added_and_then_deleted_user_in_not_authenticated_test() ->
+    InitState = init_state(),
+    AddedUsersLogin = randomize_name("Adam"),
+    AddedUsersPassword = randomize_name("admin"),
+    OneUserState = add_user(AddedUsersLogin, AddedUsersPassword, InitState),
+    ZeroUserState = del_user(AddedUsersLogin, OneUserState),
+    ?assert(not auth_user(AddedUsersLogin, AddedUsersPassword, ZeroUserState)),
     ok.
 
 %% -------------------------------------------------------
@@ -145,16 +169,15 @@ added_and_then_deleted_user_in_not_authenticated_test() ->
 
 state_size(ListState) when is_list(ListState) ->
     length(ListState);
-state_size(_State) ->
-    % TODO IMPLEMENT FOR MAPS
-    % see http://erlang.org/doc/man/maps.html#size-1
-    1.
+state_size(MapsState) ->
+    maps:size(MapsState).
 
 init_state() ->
     init_state(?IMPLEMENTATION).
 
 % TODO Add case for your module
-init_state(list_based_auth_service) -> [].
+init_state(list_based_auth_service) -> [];
+init_state(map_based_auth_service) -> maps:new().
 
 randomize_name(Base) ->
     RandomBinary = base64:encode(crypto:strong_rand_bytes(6)),
